@@ -36,15 +36,16 @@ class Person(models.Model):
     def json(self):
         election = None
         try:
-            elections = Election.objects.filter(result=None)
+            elections = Election.objects.filter(
+                date_closed__gt=datetime.utcnow().replace(tzinfo=utc))
             if len(elections) > 0:
-                election = elections[0]
+                election = elections[0].as_dict()
         except:
             pass
         return json.dumps({
             'udid': self.udid,
             'eta': str(self.eta),
-            'election': election.json(), })
+            'election': election, })
 
 
 class Election(models.Model):
@@ -68,13 +69,13 @@ class Election(models.Model):
     def vote_no(self):
         self.yes_votes -= 1
 
-    def json(self):
-        return json.dumps({
+    def as_dict(self):
+        return {
             'closed': self.closed,
-            'person': self.person.json(),
+            'person': self.person.udid,
             'result': self.result,
             'yes_votes': self.yes_votes,
-        })
+        }
 
     def save(self, *args, **kwargs):
         if self.id is None:
