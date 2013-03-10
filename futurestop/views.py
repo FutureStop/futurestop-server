@@ -25,7 +25,7 @@ def udid(request, udid=None):
             person = Person.objects.get(udid=udid)
         except:
             return HttpResponseBadRequest('missing Person')
-    return HttpResponse(person.json())
+    return HttpResponse(person.json(), content_type='application/json')
 
 
 def election(request):
