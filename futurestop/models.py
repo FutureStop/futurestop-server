@@ -57,9 +57,14 @@ class Election(models.Model):
     def vote_yes(self):
         self.yes_votes += 1
 
+    def vote_no(self):
+        self.yes_votes -= 1
+
     def save(self, *args, **kwargs):
         if self.id is None:
             now = datetime.utcnow()
             ending = now + timedelta(seconds=30)
             self.date_closed = ending
+            total_riders = Person.objects.filter(boarded=True).count()
+            self.yes_votes = total_riders
         super(Election, self).save(*args, **kwargs)
