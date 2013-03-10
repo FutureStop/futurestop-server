@@ -1,14 +1,14 @@
 from django.db import models
 
 
-class Vehicle(models.Model):
-    """
-    Vehicle Model.
-    """
-    name = models.CharField(max_length=255)
-
-    def __unicode__(self):
-        return unicode(self.name)
+#class Vehicle(models.Model):
+#    """
+#    Vehicle Model.
+#    """
+#    name = models.CharField(max_length=255)
+#
+#    def __unicode__(self):
+#        return unicode(self.name)
 
 
 class Person(models.Model):
@@ -22,9 +22,8 @@ class Person(models.Model):
     """
     udid = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    vehicle = models.ForeignKey(Vehicle, related_name='passengers')
-    #eta = models.IntegerField()
-    eta = models.DateTimeField()
+    #vehicle = models.ForeignKey(Vehicle, related_name='passengers')
+    eta = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         return unicode(self.udid)
@@ -45,7 +44,7 @@ class Election(models.Model):
         new rider
     """
     date_closed = models.DateTimeField()
-    vehicle = models.ForeignKey(Vehicle, related_name='elections')
+    #vehicle = models.ForeignKey(Vehicle, related_name='elections')
     person = models.ForeignKey(Person, related_name='elections')
     result = models.NullBooleanField(help_text='true if passenger voted on')
     is_closed = models.BooleanField(default=False)
