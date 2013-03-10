@@ -1,15 +1,7 @@
-from django.db import models
+import json
 from datetime import datetime, timedelta
 
-
-#class Vehicle(models.Model):
-#    """
-#    Vehicle Model.
-#    """
-#    name = models.CharField(max_length=255)
-#
-#    def __unicode__(self):
-#        return unicode(self.name)
+from django.db import models
 
 
 class Person(models.Model):
@@ -21,7 +13,7 @@ class Person(models.Model):
         on new person creation
         create a new election
     """
-    udid = models.CharField(max_length=255)
+    udid = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     #vehicle = models.ForeignKey(Vehicle, related_name='passengers')
     eta = models.DateTimeField(null=True, blank=True)
@@ -36,6 +28,11 @@ class Person(models.Model):
         create a new election
         """
         super(Person, self).save(*args, **kwargs)
+
+    def json(self):
+        return json.dumps({
+            'udid': self.udid,
+            'eta': str(self.eta), })
 
 
 class Election(models.Model):
