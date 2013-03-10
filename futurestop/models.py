@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime, timedelta
 
 
 #class Vehicle(models.Model):
@@ -44,19 +45,20 @@ class Election(models.Model):
         new rider
     """
     date_closed = models.DateTimeField()
-    #vehicle = models.ForeignKey(Vehicle, related_name='elections')
     person = models.ForeignKey(Person, related_name='elections')
     result = models.NullBooleanField(help_text='true if passenger voted on')
-    is_closed = models.BooleanField(default=False)
-    yes_votes = models.IntegerField()
+    yes_votes = models.IntegerField(null=True, blank=True)
 
     @property
     def closed(self):
-        # if current_time > date_closed
-        return True
+        return self.date_closed <= datetime.utcnow()
 
     def vote_yes(self):
         self.yes_votes += 1
 
     def save(self, *args, **kwargs):
+        if self.id is None:
+            now = datetime.utcnow()
+            ending = now + timedelta(seconds=30)
+            self.date_closed = ending
         super(Election, self).save(*args, **kwargs)
