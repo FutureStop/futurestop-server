@@ -8,7 +8,6 @@ from models import Person, Election
 
 def udid(request, udid=None):
     if request.method == 'POST':
-        import ipdb; ipdb.set_trace()
         try:
             data = json.loads(request.body)
             eta = int(data['eta'])
