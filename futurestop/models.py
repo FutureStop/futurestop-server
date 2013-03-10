@@ -25,6 +25,7 @@ class Person(models.Model):
     name = models.CharField(max_length=255)
     #vehicle = models.ForeignKey(Vehicle, related_name='passengers')
     eta = models.DateTimeField(null=True, blank=True)
+    boarded = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.udid)
