@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 
 from django.db import models
+from django.utils.timezone import utc
 
 
 class Person(models.Model):
@@ -26,7 +27,11 @@ class Person(models.Model):
         on new person creation
         create a new election
         """
+        need_new_election = self.id is None
         super(Person, self).save(*args, **kwargs)
+        if need_new_election:
+            new_election = Election(person=self)
+            new_election.save()
 
     def json(self):
         election = None
@@ -55,7 +60,7 @@ class Election(models.Model):
 
     @property
     def closed(self):
-        return self.date_closed <= datetime.utcnow()
+        return self.date_closed <= datetime.utcnow().replace(tzinfo=utc)
 
     def vote_yes(self):
         self.yes_votes += 1
@@ -63,9 +68,17 @@ class Election(models.Model):
     def vote_no(self):
         self.yes_votes -= 1
 
+    def json(self):
+        return json.dumps({
+            'closed': self.closed,
+            'person': self.person.json(),
+            'result': self.result,
+            'yes_votes': self.yes_votes,
+        })
+
     def save(self, *args, **kwargs):
         if self.id is None:
-            now = datetime.utcnow()
+            now = datetime.utcnow().replace(tzinfo=utc)
             ending = now + timedelta(seconds=30)
             self.date_closed = ending
             total_riders = Person.objects.filter(boarded=True).count()
