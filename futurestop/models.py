@@ -15,7 +15,6 @@ class Person(models.Model):
     """
     udid = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
-    #vehicle = models.ForeignKey(Vehicle, related_name='passengers')
     eta = models.DateTimeField(null=True, blank=True)
     boarded = models.BooleanField(default=False)
 
@@ -30,17 +29,24 @@ class Person(models.Model):
         super(Person, self).save(*args, **kwargs)
 
     def json(self):
+        election = None
+        try:
+            elections = Election.objects.filter(result=None)
+            if len(elections) > 0:
+                election = elections[0]
+        except:
+            pass
         return json.dumps({
             'udid': self.udid,
-            'eta': str(self.eta), })
+            'eta': str(self.eta),
+            'election': election.json(), })
 
 
 class Election(models.Model):
     """
     election
         date_closed
-        vehicle
-        new rider
+        person - the new rider
     """
     date_closed = models.DateTimeField()
     person = models.ForeignKey(Person, related_name='elections')

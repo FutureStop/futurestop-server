@@ -17,8 +17,9 @@ def udid(request, udid=None):
         try:
             person, created = Person.objects.get_or_create(
                 udid=udid, eta=end_eta, boarded=False)
-        except:
-            return HttpResponseBadRequest('failed to create Person')
+        except Exception as e:
+            return HttpResponseBadRequest('failed to create Person {0}'.format(
+                str(e)))
     else:
         try:
             person = Person.objects.get(udid=udid)
