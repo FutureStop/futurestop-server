@@ -62,6 +62,14 @@ class Election(models.Model):
     def vote_no(self):
         self.yes_votes -= 1
 
+    def json(self):
+        return json.dumps({
+            'closed': self.closed,
+            'person': self.person.json(),
+            'result': self.result,
+            'yes_votes': self.yes_votes,
+        })
+
     def save(self, *args, **kwargs):
         if self.id is None:
             now = datetime.utcnow().replace(tzinfo=utc)
